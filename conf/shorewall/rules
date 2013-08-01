@@ -1,0 +1,32 @@
+#
+# Shorewall version 4 - Rules File
+#
+# For information on the settings in this file, type "man shorewall-rules"
+#
+# The manpage is also online at
+# http://www.shorewall.net/manpages/shorewall-rules.html
+#
+######################################################################################################################################################################################
+#ACTION		SOURCE		DEST		PROTO	DEST	SOURCE		ORIGINAL	RATE		USER/	MARK	CONNLIMIT	TIME         HEADERS         SWITCH
+#							PORT	PORT(S)		DEST		LIMIT		GROUP
+#SECTION BLACKLIST
+#SECTION ALL
+#SECTION ESTABLISHED
+#SECTION RELATED
+
+SECTION NEW
+
+SSH/ACCEPT 	net			$FW
+Ping/ACCEPT	net			$FW
+
+# permit all ICMP traffic FROM the firewall TO the net zone
+ACCEPT		$FW 		net			icmp
+
+SMTP/ACCEPT net 		$FW
+#SMTPS/ACCEPT net 		$FW
+Submission/ACCEPT net 	$FW
+IMAP/ACCEPT net 		$FW
+IMAPS/ACCEPT net 		$FW
+
+# web
+Web/ACCEPT 	net 		$FW

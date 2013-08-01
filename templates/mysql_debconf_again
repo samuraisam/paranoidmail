@@ -1,0 +1,1 @@
+mysql-server-<version> mysql-server/root_password_again password {{password}}
