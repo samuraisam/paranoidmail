@@ -13,7 +13,7 @@ HOST = 'localhost'
 MAILSERVER_NAME = 'smtp.localhost'
 MYSQL_ROOT_PASSWORD = 'O_MAH_GAH'
 MYSQL_MAIL_PASSWORD = 'YA_WAI_LOL'
-
+ROOT_MAIL_PASSWORD = 'MYPASSWORDLOLOL'
 
 # set up the firewall
 def setup_firewall():
@@ -93,6 +93,7 @@ def setup_postfix():
 def setup_courier():
 	print 'setting up courier...'
 	
+	# install courier and dependencies
 	chko(['debconf-set-selections'],
 		 _input="courier courier-base/webadmin-configmode boolean 1")
 	chko(['debconf-set-selections'],
@@ -101,8 +102,17 @@ def setup_courier():
 	chko(['apt-get', 'install', '-y', 'courier-base', 'courier-authdaemon',
 		  'courier-authlib-mysql', 'courier-imap', 'courier-imap-ssl', 'courier-ssl'])
 
+	# configure courier
+	chko(['cp', fnrs('conf/courier/authdaemonrc'), '/etc/courier/authdaemonrc'])
+	chko(['cp', fnrs('conf/courier/authmysqlrc'), '/etc/courier/authmysqlrc'])
+
+def setup_root_mail_account():
+	chko(['mysql', '-u', 'mail', '-p{}'.format(MYSQL_MAIL_PASSWORD), 'maildb'],
+		 _input=rtmpl('templates/localhost_users.sql', password=ROOT_MAIL_PASSWORD))
+
 if __name__ == '__main__':
-	# setup_firewall()
-	# setup_mysql()
-	# setup_postfix()
+	setup_firewall()
+	setup_mysql()
+	setup_postfix()
 	setup_courier()
+	setup_root_mail_account()
