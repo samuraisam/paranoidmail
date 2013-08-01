@@ -7,7 +7,7 @@ import os
 import subprocess
 from lib import *
 
-
+HOST = 'localhost'
 MYSQL_ROOT_PASSWORD = 'O_MAH_GAH'
 MYSQL_MAIL_PASSWORD = 'YA_WAI_LOL'
 
@@ -30,8 +30,10 @@ def setup_firewall():
 
 def setup_mysql():
 	print 'setting up mysql...'
-	chko(['debconf-set-selections', rtmpl_to_file('mysql_debconf', 'mysql_debconf', password=MYSQL_ROOT_PASSWORD)])
-	chko(['debconf-set-selections', rtmpl_to_file('mysql_debconf_again', 'mysql_debconf_again', password=MYSQL_ROOT_PASSWORD)])
+	chko(['debconf-set-selections'], 
+		 _input=rtmpl('mysql_debconf', password=MYSQL_ROOT_PASSWORD))
+	chko(['debconf-set-selections'],
+		 _input=rtmpl('mysql_debconf_again', password=MYSQL_ROOT_PASSWORD))
 	
 	chko(['apt-get', 'install', '-y', 'mysql-client', 'mysql-server'])
 
@@ -48,6 +50,18 @@ def setup_mysql():
 	chko(['/etc/init.d/mysql', 'restart'])
 
 
+def setup_postfix():
+	print 'setting up postfix...'
+
+	chko(['debconf-set-selections'],
+		 _input="postfix postfix/mailname string {}".format(HOST))
+	chko(['debconf-set-selections'],
+		 _input="postfix postfix/main_mailer_type string 'Internet Site'")
+
+	chko(['apt-get', 'install', '-y', 'postfix', 'postfix-mysql'])
+
+
 if __name__ == '__main__':
 	setup_firewall()
 	setup_mysql()
+	setup_postfix()
