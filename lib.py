@@ -61,7 +61,7 @@ def chko(*a, **kw):
 chko.verbose = True
 
 def rtmpl(template_name, **kw):
-	ct = open(fnrs('templates/{}'.format(template_name)), 'r').read()
+	ct = open(fnrs(template_name), 'r').read()
 	from jinja2 import Template
 	t = Template(ct)
 	return t.render(**kw)

@@ -1,0 +1,8 @@
+user=mail 
+password={{password}} 
+dbname=maildb 
+table=users 
+select_field=maildir 
+where_field=id 
+hosts=127.0.0.1 
+additional_conditions = and enabled = 1
